@@ -10,7 +10,7 @@
 (when (and (eq system-type 'darwin)
            (bound-and-true-p ns-emacs-plus-version))
   (dolist (parameter
-           '((alpha-background . 0.78)
+           '((alpha-background . 0.50)
              (ns-background-blur . 28)
              (ns-alpha-elements ns-alpha-all)
              (undecorated-round . t)
@@ -320,6 +320,7 @@
 ;; Inlay hints disable
 (after! eglot
   (add-to-list 'eglot-ignored-server-capabilities :inlayHintProvider)
+  (add-to-list 'eglot-ignored-server-capabilities :diagnosticProvider)
   ;; (setq eglot-code-action-indications '(margin))
   ;; (add-hook 'eglot-managed-mode-hook
   ;;           (lambda ()
@@ -443,3 +444,7 @@
     :background "#bf5af2"
     :foreground "#ffffff"
     :weight bold))
+
+(after! doom-themes
+  (setcdr (assoc 'gnus-group-news-low-empty doom-themes-base-faces)
+          '(:inherit 'gnus-group-mail-1-empty :weight 'normal)))

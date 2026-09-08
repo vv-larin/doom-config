@@ -54,4 +54,5 @@
 ;; (unpin! t)
 
 (package! treemacs-evil)
+(unpin! flycheck)
 (package! flycheck-popup-tip)
