@@ -393,7 +393,9 @@
     :foreground "#d5c4a1"
     :weight normal))
 
+;; (setq doom-font (font-spec :family "Monaspace Neon NF" :size 14))
 ;; (setq doom-font (font-spec :family "Monaspace Argon NF" :size 14))
+(setq doom-font (font-spec :family "Menlo" :size 14))
 
 ;; Vivid highlights that remain transparent through ns-alpha-all.
 (custom-set-faces!
