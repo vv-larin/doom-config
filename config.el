@@ -450,3 +450,32 @@
 (after! doom-themes
   (setcdr (assoc 'gnus-group-news-low-empty doom-themes-base-faces)
           '(:inherit 'gnus-group-mail-1-empty :weight 'normal)))
+
+;; Documentation links fix
+(require 'url-parse)
+(require 'url-util)
+
+(defun vl/help-follow-link-at-point ()
+  "Follow a Help/Eglot link at point."
+  (interactive)
+  (cond
+   ;; Normal Emacs Help buttons.
+   ((button-at (point))
+    (push-button))
+
+   ;; Eglot/ElDoc Markdown links.
+   ((let ((url (get-text-property (point) 'help-echo)))
+      (when (stringp url)
+        (let ((parsed (url-generic-parse-url url)))
+          (if (equal (url-type parsed) "file")
+              (find-file
+               (url-unhex-string (url-filename parsed)))
+            (browse-url url)))
+        t)))
+
+   ;; Ordinary visible URLs.
+   (t
+    (browse-url-at-point))))
+
+(map! :map help-mode-map
+      :n "RET" #'vl/help-follow-link-at-point)
