@@ -393,6 +393,40 @@
     :foreground "#d5c4a1"
     :weight normal))
 
+;; GDScript declaration faces
+(defface vl-gdscript-function-declaration-face
+  '((t (:foreground "#83a598"
+        :weight bold)))
+  "Face for GDScript function declarations.")
+
+(defface vl-gdscript-variable-declaration-face
+  '((t (:foreground "#83a598"
+        :weight bold)))
+  "Face for GDScript variable declarations.")
+
+(defun vl/gdscript-ts-declaration-highlighting ()
+  (setq-local
+   treesit-font-lock-settings
+   (append
+    treesit-font-lock-settings
+    (treesit-font-lock-rules
+     :language 'gdscript
+     :feature 'definition
+     :override t
+
+     ;; func foo():
+     '((function_definition
+        (name) @vl-gdscript-function-declaration-face)
+
+       ;; var foo = ...
+       (variable_statement
+        name: (name) @vl-gdscript-variable-declaration-face)))))
+
+  (font-lock-flush))
+
+(add-hook 'gdscript-ts-mode-hook
+          #'vl/gdscript-ts-declaration-highlighting)
+
 ;; (setq doom-font (font-spec :family "Monaspace Neon NF" :size 14))
 ;; (setq doom-font (font-spec :family "Monaspace Argon NF" :size 14))
 (setq doom-font (font-spec :family "Menlo" :size 14))
@@ -479,3 +513,17 @@
 
 (map! :map help-mode-map
       :n "RET" #'vl/help-follow-link-at-point)
+
+;; .NET / C#
+(when (eq system-type 'darwin)
+  (setenv "DOTNET_ROOT" "/usr/local/share/dotnet")
+  (add-to-list 'exec-path "/usr/local/share/dotnet")
+  (setenv "PATH"
+          (concat "/usr/local/share/dotnet:"
+                  (getenv "PATH"))))
+
+;; Global .NET tools such as csharp-ls
+(let ((dotnet-tools (expand-file-name "~/.dotnet/tools")))
+  (add-to-list 'exec-path dotnet-tools)
+  (setenv "PATH"
+          (concat dotnet-tools ":" (getenv "PATH"))))
