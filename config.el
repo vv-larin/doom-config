@@ -1,10 +1,36 @@
 ;; $DOOMDIR/config.el -*- lexical-binding: t; -*-
 
 ;; Hardcode default frame size for Doom Emacs
-(add-to-list 'default-frame-alist '(width . 240))   ;; width in characters
-(add-to-list 'default-frame-alist '(height . 80))   ;; height in lines
-(add-to-list 'default-frame-alist '(top . 50))      ;; optional: Y position in pixels
-(add-to-list 'default-frame-alist '(left . 100))    ;; optional: X position in pixels
+;; (add-to-list 'default-frame-alist '(width . 240))   ;; width in characters
+;; (add-to-list 'default-frame-alist '(height . 80))   ;; height in lines
+;; (add-to-list 'default-frame-alist '(top . 50))      ;; optional: Y position in pixels
+;; (add-to-list 'default-frame-alist '(left . 100))    ;; optional: X position in pixels
+
+(defun vl/size-frame (&optional frame)
+  "Size FRAME relative to the current monitor."
+  (let ((frame (or frame (selected-frame))))
+    (with-selected-frame frame
+      (when (display-graphic-p)
+        (let* ((workarea (alist-get 'workarea
+                                    (frame-monitor-attributes frame)))
+               (mx (nth 0 workarea))
+               (my (nth 1 workarea))
+               (mw (nth 2 workarea))
+               (mh (nth 3 workarea))
+
+               ;; Desired proportions
+               (width  (round (* mw 0.90)))
+               (height (round (* mh 0.90)))
+
+               ;; Center the frame
+               (x (+ mx (/ (- mw width) 2)))
+               (y (+ my (/ (- mh height) 2))))
+
+          (set-frame-position frame x y)
+          (set-frame-size frame width height t))))))
+
+(add-hook 'after-make-frame-functions #'vl/size-frame)
+(add-hook 'window-setup-hook #'vl/size-frame)
 
 ;; macOS glass appearance, available in the patched Emacs Plus build.
 (when (and (eq system-type 'darwin)
